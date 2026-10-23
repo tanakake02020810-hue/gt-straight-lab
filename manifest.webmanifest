@@ -1,19 +1,18 @@
 {
-  "name": "HairHouse GT StraightLAB",
-  "short_name": "StraightLAB",
-  "start_url": "./",
-  "scope": "./",
+  "name": "Straight Lab",
+  "short_name": "StraightLab",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f6f0ea",
-  "theme_color": "#f6f0ea",
+  "background_color": "#F9F8F6",
+  "theme_color": "#9C8379",
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
