@@ -1,10 +1,11 @@
 {
   "name": "HairHouse GT StraightLAB",
-  "short_name": "GT StraightLAB",
+  "short_name": "StraightLAB",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#0b1017",
-  "theme_color": "#0b1017",
+  "background_color": "#f6f0ea",
+  "theme_color": "#f6f0ea",
   "icons": [
     {
       "src": "./icon-192.png",
