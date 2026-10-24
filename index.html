@@ -21,8 +21,26 @@ function attach(frame,brand){
  panel.innerHTML='<div class="eyebrow">PROFESSIONAL MODE</div><h2>プロフェッショナルモード</h2><label><input type="checkbox" id="gt-pro-enable"> プロフェッショナルモードを使用</label><div id="gt-pro-controls" hidden><p class="legend">マニュアル・既存自動選定の配合を基準に、登録薬剤の配合比率を調整します。アルギニンを選択すると既存のアルギニン選定を基準にします。薬剤の混合可否とAC・pHは実測・メーカー確認が必要です。</p><label>基準モード</label><select id="gt-pro-base"><option value="normal">マニュアル／通常選定</option><option value="arginine">アルギニン選定</option></select><div id="gt-pro-zones"></div></div>';
  const basePanel=mode.closest('section.panel');basePanel.parentNode.insertBefore(panel,basePanel.nextSibling);
  const enabled=panel.querySelector('#gt-pro-enable'),controls=panel.querySelector('#gt-pro-controls'),base=panel.querySelector('#gt-pro-base'),root=panel.querySelector('#gt-pro-zones');
+ // Independent third mode: the existing calculator stays in its documented normal mode.
+ const normalValue=brand==='u'?'manual':'standard';
+ const proOption=doc.createElement('option');proOption.value='gt-professional';proOption.textContent='プロフェッショナルモード';
+ const visibleMode=mode.cloneNode(true);visibleMode.id=mode.id+'-visible';visibleMode.append(proOption);
+ mode.style.display='none';mode.parentNode.insertBefore(visibleMode,mode.nextSibling);
+ panel.querySelector('label').hidden=true;
+ base.parentElement.querySelector('label[for="gt-pro-base"]')?.remove();
+ base.hidden=true;
+ base.previousElementSibling && (base.previousElementSibling.hidden=true);
  const vals=names.map(()=>({tg:null,ac:null}));
- function setBase(){if(brand==='u'){mode.value=base.value==='arginine'?'adjust':'manual';}else{mode.value=base.value==='arginine'?'arginine':'standard';}mode.dispatchEvent(new Event('change',{bubbles:true}));}
+ function setBase(){mode.value=normalValue;mode.dispatchEvent(new Event('change',{bubbles:true}));}
+ function selectVisibleMode(){
+   const isPro=visibleMode.value==='gt-professional';
+   enabled.checked=isPro;panel.hidden=!isPro;controls.hidden=!isPro;
+   vals.forEach(v=>{v.tg=null;v.ac=null});
+   if(isPro){setBase();setTimeout(recalc,100)}
+   else{mode.value=visibleMode.value;mode.dispatchEvent(new Event('change',{bubbles:true}));}
+ }
+ visibleMode.addEventListener('change',selectVisibleMode);
+ panel.hidden=true;
  function recalc(){if(!enabled.checked)return;
  let outputs,zones,drugs;
  try{outputs=win.eval('outputs');zones=win.eval('zones');drugs=win.eval('drugs')}catch(e){root.textContent='元の選定結果を取得できません。';return;}
@@ -75,8 +93,8 @@ function attach(frame,brand){
  section.append(result);root.append(section);
  });
  }
- enabled.onchange=()=>{controls.hidden=!enabled.checked;if(enabled.checked){setBase();recalc();}};
- base.onchange=()=>{vals.forEach(v=>{v.tg=null;v.ac=null});setBase();setTimeout(recalc,50)};
+
+
  mode.addEventListener('change',()=>{if(enabled.checked)setTimeout(recalc,50)});
  doc.getElementById('zones').addEventListener('change',()=>{vals.forEach(v=>{v.tg=null;v.ac=null});setTimeout(recalc,80)});
  const reset=doc.getElementById('reset');if(reset)reset.addEventListener('click',()=>{vals.forEach(v=>{v.tg=null;v.ac=null});setTimeout(recalc,80)});
