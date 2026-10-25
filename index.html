@@ -30,14 +30,19 @@ main#appArea{height:calc(100dvh - 225px);min-height:350px}@media(max-width:500px
  updateLink(location.hash==='#HITA'?'h':'u');
  function refreshInstall(){
   if(standalone()){btn.hidden=true;guide.hidden=true;return;}
-  btn.hidden=!promptEvent;
+  btn.hidden=false;
+  guide.hidden=true;
  }
  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;refreshInstall();});
  window.addEventListener('appinstalled',()=>{promptEvent=null;btn.hidden=true;guide.hidden=true;});
  btn.addEventListener('click',async()=>{
-  if(!promptEvent)return;
+  if(!promptEvent){
+    guide.hidden=false;
+    guide.textContent=/iPad|iPhone|iPod/.test(navigator.userAgent)?'Safariの共有メニューから「ホーム画面に追加」を選んでください。':'Chromeの右上「︙」から「アプリをインストール」または「ホーム画面に追加」を選んでください。';
+    return;
+  }
   const e=promptEvent;promptEvent=null;btn.hidden=true;
-  try{await e.prompt();await e.userChoice;}catch(err){}
+  try{await e.prompt();const choice=await e.userChoice;if(choice.outcome==='accepted'){btn.hidden=true;guide.hidden=true;return;}}catch(err){}
   refreshInstall();
  });
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshInstall();});
