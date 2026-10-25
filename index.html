@@ -10,7 +10,7 @@ iframe{background:#f6f0ea!important}
 .manual-image-wrap img,#manualView iframe{border:1px solid #efe3db!important;border-radius:20px!important}
 nav button{white-space:nowrap;padding:9px 16px!important;font-size:13px!important}
 @media(max-width:500px){nav button{padding:8px 12px!important;font-size:12px!important}.brand{font-size:11px!important}}
-main#appArea{height:calc(100dvh - 225px);min-height:350px}@media(max-width:500px){main#appArea{height:calc(100dvh - 252px);min-height:320px}}</style><style>#gt-quick-actions{display:none!important}#gt-install-now[hidden],#gt-install-guide[hidden]{display:none!important}</style></head><body><header><div class="brand">HairHouse GT StraightLAB<small>ut-et / HITA カルテ方式</small></div><button type="button" id="gt-install-now" hidden style="background:#d89188;color:white;border:0;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;white-space:nowrap">アプリをインストール</button><span id="gt-install-guide" hidden style="font-size:11px;color:#f4ded6;max-width:280px"></span><nav aria-label="薬剤シリーズ切り替え"><button id="u" aria-selected="true" onclick="selectLab('u')">ut-et</button><button id="h" aria-selected="false" onclick="selectLab('h')">HITA</button><button id="manualToggle" onclick="toggleManual()" aria-selected="false">マニュアル</button></nav></header><section hidden id="gt-quick-actions" aria-label="メーカー公式商品情報" style="position:static;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 12px;background:#fff8f5;border:1px solid #efd9d3;border-radius:12px;margin:8px 12px 12px">
+main#appArea{height:calc(100dvh - 225px);min-height:350px}@media(max-width:500px){main#appArea{height:calc(100dvh - 252px);min-height:320px}}</style><style>#gt-quick-actions{display:none!important}#gt-install-now[hidden],#gt-install-guide[hidden]{display:none!important}#gt-install-now{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:#d89188!important;color:white!important;border:0!important;max-width:100%;white-space:nowrap}#gt-install-now[hidden]{display:none!important}@media(max-width:500px){#gt-install-now{font-size:11px!important;padding:8px 10px!important}} </style></head><body><header><div class="brand">HairHouse GT StraightLAB<small>ut-et / HITA カルテ方式</small></div><button type="button" id="gt-install-now" style="background:#d89188;color:white;border:0;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;white-space:nowrap">アプリをインストール</button><span id="gt-install-guide" hidden style="font-size:11px;color:#f4ded6;max-width:280px"></span><nav aria-label="薬剤シリーズ切り替え"><button id="u" aria-selected="true" onclick="selectLab('u')">ut-et</button><button id="h" aria-selected="false" onclick="selectLab('h')">HITA</button><button id="manualToggle" onclick="toggleManual()" aria-selected="false">マニュアル</button></nav></header><section hidden id="gt-quick-actions" aria-label="メーカー公式商品情報" style="position:static;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 12px;background:#fff8f5;border:1px solid #efd9d3;border-radius:12px;margin:8px 12px 12px">
 <a id="gt-product-link" href="https://www.napla.co.jp/products/brand/ut-et/" target="_blank" rel="noopener noreferrer" style="display:inline-block;background:#fff;border:1px solid #e7c8be;color:#895b52;border-radius:999px;padding:10px 13px;font-size:13px;font-weight:700;text-decoration:none">ナプラ ut-et 公式商品 ↗</a>
 
 
@@ -29,19 +29,19 @@ main#appArea{height:calc(100dvh - 225px);min-height:350px}@media(max-width:500px
  window.gtUpdateProductLink=updateLink;
  updateLink(location.hash==='#HITA'?'h':'u');
  function refreshInstall(){
-  if(standalone()){btn.hidden=true;guide.hidden=true;return;}
-  btn.hidden=false;
+  if(standalone()){btn.style.display="none";btn.hidden=true;guide.hidden=true;return;}
+  btn.hidden=false;btn.style.display="inline-flex";
   guide.hidden=true;
  }
  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;refreshInstall();});
- window.addEventListener('appinstalled',()=>{promptEvent=null;btn.hidden=true;guide.hidden=true;});
+ window.addEventListener('appinstalled',()=>{promptEvent=null;btn.hidden=true;btn.style.display="none";guide.hidden=true;});
  btn.addEventListener('click',async()=>{
   if(!promptEvent){
     guide.hidden=false;
     guide.textContent=/iPad|iPhone|iPod/.test(navigator.userAgent)?'Safariの共有メニューから「ホーム画面に追加」を選んでください。':'Chromeの右上「︙」から「アプリをインストール」または「ホーム画面に追加」を選んでください。';
     return;
   }
-  const e=promptEvent;promptEvent=null;btn.hidden=true;
+  const e=promptEvent;promptEvent=null;btn.hidden=true;btn.style.display="none";
   try{await e.prompt();const choice=await e.userChoice;if(choice.outcome==='accepted'){btn.hidden=true;guide.hidden=true;return;}}catch(err){}
   refreshInstall();
  });
