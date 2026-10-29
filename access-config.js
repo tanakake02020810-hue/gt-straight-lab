@@ -1,1 +1,1 @@
-const GT_PASSWORD_SHA256 = "6eb6e45a2ab4ddb6e48efdaf8c01bc6cfc3b034f12c71d350f4f053d342c4949";
+window.STRAIGHTLAB_ACCESS = { passwordHash: "eefcb3370acd295c71dfefa016a89597bea81bb76d7f96a6e1156e1ff0e103dd" };
