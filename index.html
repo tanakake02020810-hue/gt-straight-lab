@@ -55,7 +55,7 @@ nav button[aria-selected=true]{box-shadow:0 3px 9px #a96c5040!important}
 #gt-quick-actions[hidden]{display:none!important}
 #gt-product-link{padding:7px 11px!important;font-size:12px!important}
 @media(max-width:500px){#gt-install-now{padding:6px 9px!important;font-size:10px!important}.note{font-size:10px!important;padding:5px 10px!important}}
-</style></head><body><header><div class="brand">HairHouse GT StraightLAB</div><button type="button" id="gt-install-now" style="background:#d89188;color:white;border:0;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;white-space:nowrap">アプリをインストール</button><span id="gt-install-guide" hidden style="font-size:11px;color:#f4ded6;max-width:280px"></span><nav aria-label="薬剤シリーズ切り替え"><button id="u" aria-selected="true" onclick="selectLab('u')">ut-et</button><button id="h" aria-selected="false" onclick="selectLab('h')">HITA</button><button id="manualToggle" onclick="toggleManual()" aria-selected="false">マニュアル</button><button id="specTab" onclick="openSpecTab()" aria-selected="false">指定配合</button></nav></header><section hidden id="gt-quick-actions" aria-label="メーカー公式商品情報" style="position:static;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 12px;background:#fff8f5;border:1px solid #efd9d3;border-radius:12px;margin:8px 12px 12px">
+</style><style id="gt-ios-install-style">#gt-ios-install[hidden]{display:none!important}#gt-ios-install{position:fixed;inset:0;z-index:99999;background:rgba(32,25,23,.62);display:flex;align-items:center;justify-content:center;padding:18px}#gt-ios-install .gt-ios-card{width:min(100%,420px);background:#fffaf6;color:#4b3931;border-radius:22px;padding:22px;box-shadow:0 20px 65px #0005;line-height:1.65}#gt-ios-install .gt-ios-card h2{margin:0 0 8px;color:#ad7c61;font-size:20px}#gt-ios-install .gt-ios-step{padding:12px 0;border-bottom:1px solid #eadbd1;font-size:15px}#gt-ios-install .gt-ios-num{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:50%;background:#ad7c61;color:white;margin-right:7px;font-weight:bold}#gt-ios-install .gt-ios-close{width:100%;margin-top:18px;background:#ad7c61!important;color:white!important;border:0!important;padding:12px!important}#gt-ios-install .gt-ios-tip{font-size:12px;color:#796b62;margin-top:12px}</style></head><body><header><div class="brand">HairHouse GT StraightLAB</div><button type="button" id="gt-install-now" style="background:#d89188;color:white;border:0;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;white-space:nowrap">アプリをインストール</button><span id="gt-install-guide" hidden style="font-size:11px;color:#f4ded6;max-width:280px"></span><nav aria-label="薬剤シリーズ切り替え"><button id="u" aria-selected="true" onclick="selectLab('u')">ut-et</button><button id="h" aria-selected="false" onclick="selectLab('h')">HITA</button><button id="manualToggle" onclick="toggleManual()" aria-selected="false">マニュアル</button><button id="specTab" onclick="openSpecTab()" aria-selected="false">指定配合</button></nav></header><section hidden id="gt-quick-actions" aria-label="メーカー公式商品情報" style="position:static;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 12px;background:#fff8f5;border:1px solid #efd9d3;border-radius:12px;margin:8px 12px 12px">
 <a id="gt-product-link" href="https://www.napla.co.jp/products/brand/ut-et/" target="_blank" rel="noopener noreferrer" style="display:inline-block;background:#fff;border:1px solid #e7c8be;color:#895b52;border-radius:999px;padding:10px 13px;font-size:13px;font-weight:700;text-decoration:none">メーカー公式 ↗</a>
 
 
@@ -82,8 +82,16 @@ nav button[aria-selected=true]{box-shadow:0 3px 9px #a96c5040!important}
  window.addEventListener('appinstalled',()=>{promptEvent=null;btn.hidden=true;btn.style.display="none";guide.hidden=true;});
  btn.addEventListener('click',async()=>{
   if(!promptEvent){
-    guide.hidden=false;
-    guide.textContent=/iPad|iPhone|iPod/.test(navigator.userAgent)?'Safariの共有メニューから「ホーム画面に追加」を選んでください。':'Chromeの右上「︙」から「アプリをインストール」または「ホーム画面に追加」を選んでください。';
+    if(/iPad|iPhone|iPod/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1){
+      const dialog=document.getElementById('gt-ios-install');
+      const isSafari=/Safari/i.test(navigator.userAgent)&&!/CriOS|FxiOS|EdgiOS|OPiOS/i.test(navigator.userAgent);
+      document.getElementById('gt-ios-safari-guide').hidden=!isSafari;
+      document.getElementById('gt-ios-other-guide').hidden=isSafari;
+      dialog.hidden=false;
+    }else{
+      guide.hidden=false;
+      guide.textContent='ブラウザのメニューから「アプリをインストール」または「ホーム画面に追加」を選んでください。';
+    }
     return;
   }
   const e=promptEvent;promptEvent=null;btn.hidden=true;btn.style.display="none";
@@ -91,10 +99,12 @@ nav button[aria-selected=true]{box-shadow:0 3px 9px #a96c5040!important}
   refreshInstall();
  });
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshInstall();});
+ document.getElementById('gt-ios-install-close').addEventListener('click',()=>{document.getElementById('gt-ios-install').hidden=true;});
+ document.getElementById('gt-ios-install').addEventListener('click',e=>{if(e.target.id==='gt-ios-install')e.currentTarget.hidden=true;});
  window.addEventListener('pageshow',refreshInstall);
  refreshInstall();
  if('serviceWorker' in navigator && location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-})();</script><main id="appArea"><iframe id="uf" title="ut-et STRAIGHT LABO" src="about:blank"></iframe><iframe id="hf" title="HITA STRAIGHT LABO" src="about:blank" hidden></iframe></main><section id="gt-spec-view" aria-label="スペック指定配合">
+})();</script><div id="gt-ios-install" hidden role="dialog" aria-modal="true" aria-labelledby="gt-ios-install-title"><div class="gt-ios-card"><h2 id="gt-ios-install-title">ホーム画面に追加</h2><div id="gt-ios-safari-guide"><div class="gt-ios-step"><span class="gt-ios-num">1</span>Safariの画面にある <strong>共有（□から↑）</strong> をタップ</div><div class="gt-ios-step"><span class="gt-ios-num">2</span>メニューから <strong>「ホーム画面に追加」</strong> を選択</div><div class="gt-ios-step"><span class="gt-ios-num">3</span>右上の <strong>「追加」</strong> をタップ</div><p class="gt-ios-tip">※「ホーム画面に追加」が見つからない場合は、共有メニューを下へスクロールしてください。</p></div><div id="gt-ios-other-guide" hidden><p>iPhoneではSafariでこのページを開くと、ホーム画面に追加できます。</p><p class="gt-ios-tip">Safariで開き直してから、このインストールボタンを押してください。</p></div><button type="button" class="gt-ios-close" id="gt-ios-install-close">閉じる</button></div></div><main id="appArea"><iframe id="uf" title="ut-et STRAIGHT LABO" src="about:blank"></iframe><iframe id="hf" title="HITA STRAIGHT LABO" src="about:blank" hidden></iframe></main><section id="gt-spec-view" aria-label="スペック指定配合">
 <div class="gt-panel"><h2>指定配合</h2><p class="gt-muted">毛髪診断・選定方法なし。希望するTG・AC・pHを入力して、登録済みの実測配合表から近いレシピを検索します。</p>
 <div class="gt-form-grid">
 <label class="gt-field">メーカー<select id="gt-s-brand"><option value="ut-et">ut-et</option><option value="HITA">HITA</option></select></label>
