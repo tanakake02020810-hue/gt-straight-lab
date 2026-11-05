@@ -65,7 +65,8 @@ nav button[aria-selected=true]{box-shadow:0 3px 9px #a96c5040!important}
  const guide=document.getElementById('gt-install-guide');
  const link=document.getElementById('gt-product-link');
  let promptEvent=null;
- const standalone=()=>window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+ const standalone=()=>['standalone','fullscreen','minimal-ui'].some(mode=>window.matchMedia('(display-mode: '+mode+')').matches) || navigator.standalone===true;
+ const isIOS=()=>/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
  function updateLink(which){
   const hita=which==='h';
   link.href=hita?'https://www.lebel.co.jp/products/series/hita/':'https://www.napla.co.jp/products/brand/ut-et/';
@@ -75,14 +76,17 @@ nav button[aria-selected=true]{box-shadow:0 3px 9px #a96c5040!important}
  updateLink(location.hash==='#HITA'?'h':'u');
  function refreshInstall(){
   if(standalone()){btn.style.display="none";btn.hidden=true;guide.hidden=true;return;}
-  btn.hidden=false;btn.style.display="inline-flex";
+  // Android: show only when the browser explicitly offers installation.
+  // iOS: retain the manual add-to-home-screen guide.
+  const show=isIOS() || !!promptEvent;
+  btn.hidden=!show;btn.style.display=show?"inline-flex":"none";
   guide.hidden=true;
  }
  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;refreshInstall();});
  window.addEventListener('appinstalled',()=>{promptEvent=null;btn.hidden=true;btn.style.display="none";guide.hidden=true;});
  btn.addEventListener('click',async()=>{
   if(!promptEvent){
-    if(/iPad|iPhone|iPod/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1){
+    if(isIOS()){
       const dialog=document.getElementById('gt-ios-install');
       const isSafari=/Safari/i.test(navigator.userAgent)&&!/CriOS|FxiOS|EdgiOS|OPiOS/i.test(navigator.userAgent);
       document.getElementById('gt-ios-safari-guide').hidden=!isSafari;
