@@ -220,6 +220,7 @@ function gtShowMixTables(){
 'use strict';
 const labels=['根元','中間','毛先','前髪','その他'];
 const original=['根元','中間','毛先'];
+const letters=['A','B','C'];
 const state={u:original.slice(),h:original.slice()};
 const key='gt_straightlab_zone_names_v27';
 try{const saved=JSON.parse(localStorage.getItem(key)||'{}');for(const k of ['u','h'])if(Array.isArray(saved[k])&&saved[k].length===3)state[k]=saved[k].map(v=>String(v).slice(0,24));}catch(e){}
@@ -246,9 +247,9 @@ function updateFrame(frame,k){
    const isFixed=labels.slice(0,4).includes(name);
    select.value=isFixed?name:'その他';custom.style.display=isFixed?'none':'';
    if(!isFixed&&doc.activeElement!==custom)custom.value=name==='その他'?'':name;
-   const h3=card.querySelector('h3');if(h3){const desired=(i+1)+' '+name;if(h3.textContent!==desired)h3.textContent=desired;}
+   const h3=card.querySelector('h3');if(h3){const desired=letters[i]+' '+name;if(h3.textContent!==desired)h3.textContent=desired;}
  });
- const nav=doc.querySelector('.gt-karte-nav');if(nav){Array.from(nav.querySelectorAll('button')).slice(0,3).forEach((btn,i)=>{const desired=(i+1)+'. '+state[k][i];if(btn.textContent!==desired)btn.textContent=desired;});}
+ const nav=doc.querySelector('.gt-karte-nav');if(nav){Array.from(nav.querySelectorAll('button')).slice(0,3).forEach((btn,i)=>{const desired=letters[i]+' '+state[k][i];if(btn.textContent!==desired)btn.textContent=desired;});}
 }
 function refresh(frame,k){try{updateFrame(frame,k)}catch(e){}}
 function attach(frame,k){
