@@ -215,4 +215,54 @@ function gtShowMixTables(){
  window.showManual=function(which){oldShow(which);if(gtMixTables)gtRenderTables();};
  window.setManualPage=function(n){gtMixTables=false;gtId('manualView').classList.remove('gt-show-tables');oldSet(n);};
 })();
+</script><script id="gt-zone-labels-v27">
+(function(){
+'use strict';
+const labels=['根元','中間','毛先','前髪','その他'];
+const original=['根元','中間','毛先'];
+const state={u:original.slice(),h:original.slice()};
+const key='gt_straightlab_zone_names_v27';
+try{const saved=JSON.parse(localStorage.getItem(key)||'{}');for(const k of ['u','h'])if(Array.isArray(saved[k])&&saved[k].length===3)state[k]=saved[k].map(v=>String(v).slice(0,24));}catch(e){}
+function save(){try{localStorage.setItem(key,JSON.stringify(state))}catch(e){}}
+function updateFrame(frame,k){
+ const doc=frame.contentDocument;if(!doc||!doc.body)return;
+ const zoneRoot=doc.getElementById('zones');if(!zoneRoot)return;
+ const cards=Array.from(zoneRoot.children).slice(0,3);
+ cards.forEach((card,i)=>{
+   let holder=card.querySelector('.gt-zone-choice-v27');
+   if(!holder){
+     holder=doc.createElement('div');holder.className='gt-zone-choice-v27';
+     holder.style.cssText='display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 12px;padding:8px;border:1px solid #b9a38b;border-radius:10px';
+     const label=doc.createElement('span');label.textContent='診断部位';label.style.cssText='font-size:13px;font-weight:700';
+     const select=doc.createElement('select');select.className='gt-zone-select-v27';select.style.cssText='max-width:180px;min-width:110px';
+     labels.forEach(v=>{const o=doc.createElement('option');o.value=v;o.textContent=v;select.appendChild(o)});
+     const custom=doc.createElement('input');custom.type='text';custom.className='gt-zone-custom-v27';custom.placeholder='部位名を入力';custom.maxLength=24;custom.style.cssText='max-width:180px;min-width:100px';
+     select.addEventListener('change',()=>{state[k][i]=select.value==='その他'?(custom.value.trim()||'その他'):select.value;save();refresh(frame,k)});
+     custom.addEventListener('input',()=>{state[k][i]=custom.value.trim()||'その他';save();refresh(frame,k)});
+     holder.append(label,select,custom);
+     const h3=card.querySelector('h3');if(h3)h3.insertAdjacentElement('afterend',holder);else card.prepend(holder);
+   }
+   const name=state[k][i];const select=holder.querySelector('select');const custom=holder.querySelector('input');
+   const isFixed=labels.slice(0,4).includes(name);
+   select.value=isFixed?name:'その他';custom.style.display=isFixed?'none':'';
+   if(!isFixed&&doc.activeElement!==custom)custom.value=name==='その他'?'':name;
+   const h3=card.querySelector('h3');if(h3){const desired=(i+1)+' '+name;if(h3.textContent!==desired)h3.textContent=desired;}
+ });
+ const nav=doc.querySelector('.gt-karte-nav');if(nav){Array.from(nav.querySelectorAll('button')).slice(0,3).forEach((btn,i)=>{const desired=(i+1)+'. '+state[k][i];if(btn.textContent!==desired)btn.textContent=desired;});}
+}
+function refresh(frame,k){try{updateFrame(frame,k)}catch(e){}}
+function attach(frame,k){
+ let attachedDoc=null,observer=null;
+ function init(){try{
+   const doc=frame.contentDocument;if(!doc||!doc.body)return;
+   if(doc===attachedDoc)return;
+   if(observer)observer.disconnect();attachedDoc=doc;
+   let busy=false;
+   observer=new MutationObserver(()=>{if(busy)return;busy=true;observer.disconnect();try{refresh(frame,k)}finally{observer.observe(doc.body,{childList:true,subtree:true});busy=false;}});
+   refresh(frame,k);observer.observe(doc.body,{childList:true,subtree:true});
+ }catch(e){}}
+ frame.addEventListener('load',init);init();
+}
+for(const [id,k] of [['uf','u'],['hf','h']]){const frame=document.getElementById(id);if(frame)attach(frame,k)}
+})();
 </script></body></html>
