@@ -243,4 +243,45 @@ function gtShowMixTables(){
     apply(frame);
   });
 })();
+</script><script id="gt-v39-clean-notes">
+/* Presentation-only filtering. Embedded app source and calculations are unchanged. */
+(function(){
+ function tidy(doc,kind){
+  if(!doc||!doc.body)return;
+  if(kind==='h'){
+   doc.querySelectorAll('div').forEach(function(el){
+    if(el.children.length)return;
+    var t=(el.textContent||'').trim();
+    if(t.startsWith('配合は番号別の仮登録値（原本照合未完了）')||t==='TG・AC・pH：早見表の掲載参考値（実測値ではありません）'){
+      if(el.style.display!=='none')el.style.display='none';
+    }
+   });
+  }else{
+   doc.querySelectorAll('.notice').forEach(function(el){
+    var t=(el.textContent||'').trim();
+    if(!t.startsWith('参考配合のみ'))return;
+    // Keep meaningful risk and uncertainty messages; remove only repeated boilerplate.
+    var b=el.querySelector('b');if(b&&b.textContent==='参考配合のみ')b.textContent='選定上の注意';
+    el.childNodes.forEach(function(n){if(n.nodeType===3&&n.textContent.includes('施術用の確定レシピではありません。'))n.textContent=n.textContent.replace('施術用の確定レシピではありません。','');});
+   });
+  }
+ }
+ ['uf','hf'].forEach(function(id){
+  var frame=document.getElementById(id);if(!frame)return;
+  function attach(){
+   try{
+    var d=frame.contentDocument;if(!d||!d.body)return;
+    if(d.documentElement.dataset.gtV39Clean==='1')return;
+    d.documentElement.dataset.gtV39Clean='1';
+    var scheduled=false;
+    var run=function(){scheduled=false;tidy(d,id==='hf'?'h':'u');};
+    var obs=new MutationObserver(function(){if(!scheduled){scheduled=true;requestAnimationFrame(run);}});
+    obs.observe(d.body,{childList:true,subtree:true,characterData:true});
+    run();
+   }catch(e){}
+  }
+  frame.addEventListener('load',attach);
+  if(frame.contentDocument&&frame.contentDocument.readyState==='complete')attach();
+ });
+})();
 </script></body></html>
