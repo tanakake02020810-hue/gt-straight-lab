@@ -284,4 +284,48 @@ function gtShowMixTables(){
   if(frame.contentDocument&&frame.contentDocument.readyState==='complete')attach();
  });
 })();
+</script><script id="gt-v40-notice-scroll-fix">
+(function(){
+  function setup(frame){
+    try{
+      const d=frame.contentDocument,w=frame.contentWindow;
+      if(!d||!d.body||d.documentElement.dataset.gtV40==='1')return;
+      d.documentElement.dataset.gtV40='1';
+      const css=d.createElement('style');
+      css.textContent='.gt-v40-hide-note{display:none!important}';
+      d.head.appendChild(css);
+      function clean(){
+        d.querySelectorAll('.notice,.small,.legend,.gt-explain,div,p,span').forEach(function(el){
+          if(el.children.length>0 && !el.classList.contains('notice'))return;
+          const t=(el.textContent||'').trim();
+          if(!t)return;
+          if(/自動選定停止|施術不可|危険|強度が弱い|ビビリ/.test(t))return;
+          if(el.classList.contains('notice') && (/選定上の注意|参考配合のみ|毛束テスト|毛束試験|試験設計専用/.test(t))){el.classList.add('gt-v40-hide-note');return;}
+          if(t.length>280)return;
+          if(/^(?:配合は番号別の仮登録値|TG・AC・pH：早見表|GT試作参考配合|参考配合|毛束テスト|毛束試験|選定上の注意)/.test(t))el.classList.add('gt-v40-hide-note');
+        });
+      }
+      let pending=false;
+      const observer=new MutationObserver(function(){if(pending)return;pending=true;w.requestAnimationFrame(function(){pending=false;clean()})});
+      observer.observe(d.body,{subtree:true,childList:true,characterData:true});
+      clean();
+      function top(){
+        try{w.scrollTo({top:0,left:0,behavior:'instant'});d.documentElement.scrollTop=0;d.body.scrollTop=0;
+          const main=d.querySelector('main');if(main)main.scrollTop=0;
+        }catch(e){}
+      }
+      d.addEventListener('click',function(e){
+        const btn=e.target.closest('button');if(!btn)return;
+        if(btn.textContent.includes('配合結果を見る')){
+          top();w.requestAnimationFrame(top);w.setTimeout(top,80);w.setTimeout(top,250);
+        }
+      },true);
+    }catch(e){}
+  }
+  ['uf','hf'].forEach(function(id){
+    const f=document.getElementById(id);if(!f)return;
+    f.addEventListener('load',function(){setup(f)});
+    if(f.contentDocument&&f.contentDocument.readyState==='complete')setup(f);
+  });
+})();
 </script></body></html>
